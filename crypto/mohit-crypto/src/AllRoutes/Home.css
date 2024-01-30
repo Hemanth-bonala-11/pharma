@@ -1,0 +1,11 @@
+.Mid_section{
+  
+    background-image: url('../Image/de2a1b1bafe3c7693b7f98362c933e66.gif'); /* Replace with the actual path to your image file */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+  
+}

@@ -1,0 +1,9 @@
+.AboutUs{
+    background-image: url('../Image/9f34c2bd112ea28daa9b6b86d6bbbefb.gif'); /* Replace with the actual path to your image file */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+}

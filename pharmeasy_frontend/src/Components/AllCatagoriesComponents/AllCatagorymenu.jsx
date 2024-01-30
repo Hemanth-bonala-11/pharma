@@ -5,6 +5,9 @@ import { allCatagoryMenu } from "../../Media/allCatagoryMenu";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchPagedProducts } from "../../api/productAPi";
+import { HomeApi } from "../../api";
+import { fetchHomeCategories } from "../../Redux/categories/action";
 
 const AllCatagorymenu = () => {
   const [categoryName, setCategory] = useState("");
@@ -19,6 +22,18 @@ const AllCatagorymenu = () => {
   
   const [loadingMore, setLoadingMore] = useState(false);
   const categories = useSelector(state => state.categories.list);
+  const fetchProducts = async (page) => {
+    try {
+      SetShowLoadingCards(true)
+      const response = await fetchPagedProducts({ subCategoryName, subCategoryId, page });
+      setProductsList(response.data.data);
+      SetShowLoadingCards(false);
+      if (response.data.data.length === 0) {
+        setHasMore(false)
+      }
+    } catch (error) { }
+  };
+  console.log(categoryId,"category id");
   useEffect(() => {
     // setCategory(categoryName);
     
@@ -43,6 +58,7 @@ const AllCatagorymenu = () => {
             setSubCategoryName(categoryName)
             setCategoryId(item.id)
             setSubcategoryId(item.id)
+            
 
           }
         }
@@ -50,7 +66,72 @@ const AllCatagorymenu = () => {
       })
         
   }, [categoryName]);
+  useEffect(() => {
+    if (categories && categories.length > 0) {
+
+      if (categoryName) {
+        setCategory(categoryName);
+
+        const descOfCategory = categories.filter(item => {
+          return (
+            item.name === categoryName
+          )
+        })
+
+//        setCategoryDescription(descOfCategory[0].desc);
+
+      } else {
+        let firstCategory = categories[0]["name"];
+        let firstCategoryDesc = categories[0]["description"]
+        setCategory(firstCategory);
+        // setCategoryDescription(firstCategoryDesc);
+        setCategoryId(categories[0]["id"])
+      }
+    }
+  }, [categories]);
   console.log(categories,"categories");
+  useEffect(() => {
+    setHasMore(true);
+    setPage(1);
+    if (subCategoryName && subCategoryId && page) {
+      setProductsList([]);
+      fetchProducts(1)
+      
+    }
+    setSubCategoryName(subCategoryName);
+  }, [subCategoryName]);
+  const fetchMoreProducts = async (newPage) => {
+    try {
+      const response = await fetchPagedProducts({
+        subCategoryName,
+        subCategoryId,
+        page: newPage,
+      });
+
+      if (response.data.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setProductsList((prevProducts) => {
+          const uniqueProducts = [
+            ...new Map([...prevProducts, ...response.data.data].map((item) => [item.id, item])).values(),
+          ];
+          setPage(newPage);
+          return uniqueProducts;
+        });
+      }
+    } catch (error) {
+      console.log("Api error")
+    }
+  };
+  useEffect( ()=>{
+    async function getCategories(){
+    const response =await HomeApi.fetchCategories();
+    dispatch(fetchHomeCategories(response.data.data))
+
+    }
+    getCategories()
+    
+  },[])
   return (
     <Flex
       height={"762px"}
@@ -58,7 +139,7 @@ const AllCatagorymenu = () => {
       flexWrap={"wrap"}
       justify="space-between"
     >
-      {categories.map((elem) => {
+      {productsList?.map((elem) => {
         
         return (
            <Flex
@@ -72,7 +153,7 @@ const AllCatagorymenu = () => {
             transition="all 0.4s ease"
             _hover={{boxShadow:"rgba(22, 135, 110, 1) 0px 0px 5px 2px ",transition:"all 0.4s ease", transform:"scale(1.02)"}}
           >
-           <Link to={`/healthcare/products/}`}> <Flex h="112px" w="325px"  p=" 20px">
+            <Flex h="112px" w="325px"  p=" 20px">
               {/* <Flex w="28%">
                 <Image w="90%" src={elem.img} />
               </Flex> */}
@@ -88,7 +169,7 @@ const AllCatagorymenu = () => {
               >
                 &nbsp; Upto % off
               </Text>
-            </Flex></Link>
+            </Flex>
           </Flex>
         );
       })}

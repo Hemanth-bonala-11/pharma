@@ -90,7 +90,7 @@ import { placeOrder } from "../../api/OrdersApi";
           <DrawerContent>
             <DrawerCloseButton />
              {
-        showLogin?(<LoginSLider/>):(
+        showLogin?(<LoginIndivisualSlider/>):(
             
             <>
               <DrawerHeader borderBottomWidth="1px" bg="#0f847e" color="white">

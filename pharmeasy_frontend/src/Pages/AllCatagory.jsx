@@ -20,7 +20,7 @@ const AllCatagory = () => {
           <AllCatagorymenu/>
           {/* <AllCatagoryDescription/> */}
       </Box>
-          <StatisticsAllCatagory/>
+          {/* <StatisticsAllCatagory/> */}
     </Box>
   )
 }
